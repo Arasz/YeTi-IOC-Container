@@ -20,12 +20,11 @@ namespace YeTi.Tests
         [Test]
         public void ResolvesRegisteredComponent_RegisteredTypeAsGenericParameter_CreatedObjectOfGivenType()
         {
-            //Arrange
             var container = new YeTiContainer();
             container.Register<ITestInterface, TestInterfaceImplementation>();
-            //Act
+
             var resolvedObject = container.Resolve<ITestInterface>();
-            //Assert
+
             resolvedObject.ShouldBeOfType<TestInterfaceImplementation>();
         }
     }
