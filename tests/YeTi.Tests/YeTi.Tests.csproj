@@ -63,7 +63,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\YeTi\YeTi.csproj">
+    <ProjectReference Include="..\..\src\YeTi\YeTi.csproj">
       <Project>{5d133b04-cb83-4382-b58c-e41c43ba0fc0}</Project>
       <Name>YeTi</Name>
     </ProjectReference>
