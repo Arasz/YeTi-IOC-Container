@@ -42,6 +42,7 @@ namespace YeTi
 
             var constructors = actualType.GetConstructors();
 
+            //TODO: What about more then one constructor?
             var chosenConstructor = constructors.First();
 
             var dependencyTypes = chosenConstructor.GetParameters().Select(param => param.ParameterType);
