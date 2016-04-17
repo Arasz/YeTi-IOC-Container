@@ -1,18 +1,15 @@
 ﻿using NUnit.Framework;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace YeTi.Tests
 {
+    public interface ITestInterface
+    {
+    }
+
     /// <summary>
-    /// YeTi IOC container test
-    /// <remarks>
-    /// Tests naming convention [UnitOfWork_StateUnderTest_ExpectedBehavior]
-    /// </remarks>
+    /// YeTi IOC container test <remarks> Tests naming convention
+    /// [UnitOfWork_StateUnderTest_ExpectedBehavior] </remarks>
     /// </summary>
     [TestFixture]
     public class YeTiContainerTest
@@ -27,12 +24,46 @@ namespace YeTi.Tests
 
             resolvedObject.ShouldBeOfType<TestInterfaceImplementation>();
         }
+
+        [Test]
+        public void
+            ResolvesRegisteredComponentsWithParameters_RegisteredTypeAsGenericParameterAndParameters_CreatedObjectOfGivenType
+            ()
+        {
+            var container = new YeTiContainer();
+            container.Register<ITestInterface, TestImplementationWithDependency>();
+
+            var resolvedObject = container.Resolve<TestImplementationWithDependency>();
+
+            resolvedObject.ShouldBeOfType<TestImplementationWithDependency>();
+        }
     }
 
-    public interface ITestInterface
+    /// <summary>
+    /// Any dependency 
+    /// </summary>
+    internal class Dependency
     {
     }
 
+    /// <summary>
+    /// Class which takes dependency in constructor 
+    /// </summary>
+    internal class TestImplementationWithDependency : ITestInterface
+    {
+        public TestImplementationWithDependency(Dependency dependency)
+        {
+        }
+
+        public TestImplementationWithDependency()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// Implementation of test interface used in tests 
+    /// </summary>
     internal class TestInterfaceImplementation : ITestInterface
     {
     }
