@@ -3,6 +3,9 @@ using Shouldly;
 
 namespace YeTi.Tests
 {
+    /// <summary>
+    /// Interface used for tests 
+    /// </summary>
     public interface ITestInterface
     {
     }
@@ -32,8 +35,9 @@ namespace YeTi.Tests
         {
             var container = new YeTiContainer();
             container.Register<ITestInterface, TestImplementationWithDependency>();
+            container.Register<Dependency, Dependency>();
 
-            var resolvedObject = container.Resolve<TestImplementationWithDependency>();
+            var resolvedObject = container.Resolve<ITestInterface>();
 
             resolvedObject.ShouldBeOfType<TestImplementationWithDependency>();
         }
