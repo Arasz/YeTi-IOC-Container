@@ -54,16 +54,8 @@ namespace YeTi.Tests
         public TestImplementationWithDependency(Dependency dependency)
         {
         }
-
-        public TestImplementationWithDependency()
-        {
-            throw new System.NotImplementedException();
-        }
     }
 
-    /// <summary>
-    /// Implementation of test interface used in tests 
-    /// </summary>
     internal class TestInterfaceImplementation : ITestInterface
     {
     }
