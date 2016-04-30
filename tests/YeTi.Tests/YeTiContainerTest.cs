@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Shouldly;
+using YeTi.Exceptions;
 
 namespace YeTi.Tests
 {
@@ -17,6 +18,20 @@ namespace YeTi.Tests
     [TestFixture]
     public class YeTiContainerTest
     {
+        [Test]
+        public void ResolvesComponentWithMoreThenOneConstructor_RegisteredTypeAsGenericParameters_Throws()
+        {
+            var container = new YeTiContainer();
+
+            container.Register<ITestInterface, TestInterfaceImplementationWithMultipleConsturcutors>();
+            container.Register<Dependency, Dependency>();
+
+            var exception = Assert.Throws<ComponentHasMultipleConstructorsException>(() => container.Resolve<ITestInterface>());
+
+            exception.ShouldNotBeNull();
+            exception.ShouldBeOfType<ComponentHasMultipleConstructorsException>();
+        }
+
         [Test]
         public void ResolvesRegisteredComponent_RegisteredTypeAsGenericParameter_CreatedObjectOfGivenType()
         {
@@ -43,9 +58,6 @@ namespace YeTi.Tests
         }
     }
 
-    /// <summary>
-    /// Any dependency 
-    /// </summary>
     internal class Dependency
     {
     }
@@ -62,5 +74,16 @@ namespace YeTi.Tests
 
     internal class TestInterfaceImplementation : ITestInterface
     {
+    }
+
+    internal class TestInterfaceImplementationWithMultipleConsturcutors : ITestInterface
+    {
+        public TestInterfaceImplementationWithMultipleConsturcutors()
+        {
+        }
+
+        public TestInterfaceImplementationWithMultipleConsturcutors(Dependency dependency)
+        {
+        }
     }
 }

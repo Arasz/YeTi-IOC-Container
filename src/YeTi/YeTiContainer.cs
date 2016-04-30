@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using YeTi.Exceptions;
 
 namespace YeTi
 {
@@ -41,6 +42,9 @@ namespace YeTi
             var actualType = _registrations[requestedType];
 
             var constructors = actualType.GetConstructors();
+
+            if (constructors.Length > 1)
+                throw new ComponentHasMultipleConstructorsException(type);
 
             //TODO: What about more then one constructor?
             var chosenConstructor = constructors.First();
