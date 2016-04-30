@@ -1,5 +1,5 @@
-﻿using NUnit.Framework;
-using Shouldly;
+﻿using Shouldly;
+using Xunit;
 using YeTi.Exceptions;
 
 namespace YeTi.Tests
@@ -15,49 +15,63 @@ namespace YeTi.Tests
     /// YeTi IOC container test <remarks> Tests naming convention
     /// [UnitOfWork_StateUnderTest_ExpectedBehavior] </remarks>
     /// </summary>
-    [TestFixture]
     public class YeTiContainerTest
     {
-        [Test]
+        private readonly YeTiContainer _container;
+
+        public YeTiContainerTest()
+        {
+            _container = new YeTiContainer();
+        }
+
+        /// <summary>
+        /// Contains method tested by this test class 
+        /// </summary>
+        /// <returns></returns>
+        public ITestInterface Act() => _container.Resolve<ITestInterface>();
+
+        /// <exception cref="ThrowsException">
+        /// Thrown when an exception was not thrown, or when an exception of the incorrect type is thrown
+        /// </exception>
+        [Fact]
         public void ResolvesComponentWithMoreThenOneConstructor_RegisteredTypeAsGenericParameters_Throws()
         {
-            var container = new YeTiContainer();
+            _container.Register<ITestInterface, TestInterfaceImplementationWithMultipleConstructors>();
+            _container.Register<Dependency, Dependency>();
 
-            container.Register<ITestInterface, TestInterfaceImplementationWithMultipleConsturcutors>();
-            container.Register<Dependency, Dependency>();
-
-            var exception = Assert.Throws<ComponentHasMultipleConstructorsException>(() => container.Resolve<ITestInterface>());
+            var exception = Record.Exception(() => Act());
 
             exception.ShouldNotBeNull();
             exception.ShouldBeOfType<ComponentHasMultipleConstructorsException>();
         }
 
-        [Test]
+        [Fact]
         public void ResolvesRegisteredComponent_RegisteredTypeAsGenericParameter_CreatedObjectOfGivenType()
         {
-            var container = new YeTiContainer();
-            container.Register<ITestInterface, TestInterfaceImplementation>();
+            _container.Register<ITestInterface, TestInterfaceImplementation>();
 
-            var resolvedObject = container.Resolve<ITestInterface>();
+            var resolvedObject = Act();
 
             resolvedObject.ShouldBeOfType<TestInterfaceImplementation>();
         }
 
-        [Test]
+        [Fact]
         public void
             ResolvesRegisteredComponentsWithParameters_RegisteredTypeAsGenericParameterAndParameters_CreatedObjectOfGivenType
             ()
         {
-            var container = new YeTiContainer();
-            container.Register<ITestInterface, TestImplementationWithDependency>();
-            container.Register<Dependency, Dependency>();
+            _container.Register<ITestInterface, TestImplementationWithDependency>();
+            _container.Register<Dependency, Dependency>();
 
-            var resolvedObject = container.Resolve<ITestInterface>();
+            var resolvedObject = Act();
 
             resolvedObject.ShouldBeOfType<TestImplementationWithDependency>();
         }
     }
 
+    /// <summary>
+    /// Any dependency 
+    /// </summary>
     internal class Dependency
     {
     }
@@ -76,13 +90,13 @@ namespace YeTi.Tests
     {
     }
 
-    internal class TestInterfaceImplementationWithMultipleConsturcutors : ITestInterface
+    internal class TestInterfaceImplementationWithMultipleConstructors : ITestInterface
     {
-        public TestInterfaceImplementationWithMultipleConsturcutors()
+        public TestInterfaceImplementationWithMultipleConstructors()
         {
         }
 
-        public TestInterfaceImplementationWithMultipleConsturcutors(Dependency dependency)
+        public TestInterfaceImplementationWithMultipleConstructors(Dependency dependency)
         {
         }
     }
